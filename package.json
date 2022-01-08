@@ -1,0 +1,46 @@
+{
+  "name": "eeg-analysis",
+  "version": "1.2.0",
+  "description": "EEG Data Analysis Tool",
+  "main": "renderer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "package": "node package_python.js && npm run -s package-electron && npm run -s package-cleanup",
+    "package-electron": "electron-builder",
+    "package-cleanup": "rm -rf build && rm -rf run_app.spec && rm -rf dist-python"
+  },
+  "build": {
+    "appId": "com.determinant.app",
+    "productName": "EEG Analysis",
+    "asar": false,
+    "asarUnpack": [
+      "**/*.node"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "renderer.js",
+      "icon.png",
+      "node_modules/**/*"
+    ],
+    "extraResources": [{
+      "from": "dist-python/",
+      "to": "app/dist-python",
+      "filter": [
+        "**/*"
+      ]
+    }]
+  },
+  "author": "Determinant, Inc",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^16.0.5",
+    "electron-builder": "^22.14.5",
+    "request-promise": "^4.2.6"
+  },
+  "dependencies": {
+    "ps-tree": "^1.2.0"
+  }
+}
