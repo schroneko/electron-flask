@@ -47,80 +47,23 @@ const PY_DIST_FOLDER = "dist-python"; // python distributable folder
 const PY_SRC_FOLDER = "web_app"; // path to the python source
 const PY_MODULE = "run_app.py"; // the name of the main module
 
-const isRunningInBundle = () => {
-  // return require("fs").existsSync(path.join(__dirname, PY_DIST_FOLDER));
-  return require("fs").existsSync(path.join(__dirname, PY_SRC_FOLDER));
-};
-
 const getPythonScriptPath = () => {
-  // if (!isRunningInBundle()) {
-  //   return path.join(__dirname, PY_SRC_FOLDER, PY_MODULE);
-  // }
-  // if (process.platform === "win32") {
-  //   return path.join(
-  //     __dirname,
-  //     PY_DIST_FOLDER,
-  //     PY_MODULE.slice(0, -3) + ".exe"
-  //   );
-  // }
-  // return path.join(__dirname, PY_DIST_FOLDER, PY_MODULE);
+  if (app.isPackaged) {
+    const executable = process.platform === "win32" ? "run_app.exe" : "run_app";
+    return path.join(process.resourcesPath, "app", PY_DIST_FOLDER, executable);
+  }
   return path.join(__dirname, PY_SRC_FOLDER, PY_MODULE);
 };
 
-
 const startPythonSubprocess = () => {
-  let script = getPythonScriptPath();
-  console.log("script:", script);
-  if (isRunningInBundle()) {
-    // subpy = require("child_process").execFile(script, []);
-    // subpy = require("child_process").execFile(script, [], (error, stdout, stderr) => {
-    // subpy = exec(script, (error, stdout, stderr) => {
-    // subpy = spawn("python", [script])
-    // subpy = spawn("python", [script], {
-    //   cwd: this.cwd,
-    //   // env: process.env
-    //   shell: true
-    // }).on('error', function (err) {
-    //   throw err
-    // })
-
-
-    subpy = exec('python /Users/hash/Playground/electron-flask/web_app/run_app.py', (error, stdout, stderr) => {
-      // subpy = exec('python test.py', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-      // console.log('hogeeefhgaa')
-    });
-
-    // console.log('process id:' + process.pid)
-    // console.log('subpy process id:' + subpy.pid)
-
-    // subpy.stdout.on('data', (chunk) => {
-    //   console.log(new Date())
-    //   console.log(chunk.length)
-    //   // console.log(chunk.toString())
-    // })
-
-  } else {
-    // subpy = require("child_process").spawn("python", [script], (error, stdout, stderr) => {
-    // subpy = spawn("python", [script], (error, stdout, stderr) => {
-    //   if (error) {
-    //     console.log(error)
-    //     console.log(stderr);
-    //     console.log("Failed");
-    //   } else {
-    //     console.log(stdout);
-    //     console.log("OK");
-    //   }
-    // });
-
-    subpy = spawn("python", [script]);
-    console.log('fuga')
-  }
+  const script = getPythonScriptPath();
+  subpy = app.isPackaged
+    ? spawn(script, [], { cwd: __dirname })
+    : spawn("python", [script], { cwd: __dirname });
+  subpy.on("error", (error) => {
+    console.error("Failed to start the Python backend:", error.message);
+    app.quit();
+  });
 };
 
 const killPythonSubprocesses = (main_pid) => {
@@ -185,7 +128,7 @@ const createMainWindow = () => {
     // session.defaultSession.clearCache(() => {})
     // Dereference the mainWindow object
     mainWindow = null;
-    subpy.kill('SIGINT');
+    if (subpy) subpy.kill('SIGINT');
     console.log("closed")
   });
 };
@@ -203,7 +146,6 @@ app.on("ready", function () {
   // start the backend server
   startPythonSubprocess();
   console.log('ready');
-  createMainWindow();
 
   // console.log("piyo") -> Problem Nothing
 
@@ -219,7 +161,7 @@ app.on("ready", function () {
         // if (err == tmp_error) {
         // console.log('server error: ' + err);
         // }
-        startUp();
+        setTimeout(startUp, 200);
       });
   };
 

@@ -25,19 +25,21 @@
       "icon.png",
       "node_modules/**/*"
     ],
-    "extraResources": [{
-      "from": "dist-python/",
-      "to": "app/dist-python",
-      "filter": [
-        "**/*"
-      ]
-    }]
+    "extraResources": [
+      {
+        "from": "dist-python/",
+        "to": "app/dist-python",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   },
   "author": "Determinant, Inc",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^16.0.5",
-    "electron-builder": "^22.14.5",
+    "electron": "^41.10.7",
+    "electron-builder": "^26.15.3",
     "request-promise": "^4.2.6"
   },
   "dependencies": {
