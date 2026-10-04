@@ -57,9 +57,17 @@ const getPythonScriptPath = () => {
 
 const startPythonSubprocess = () => {
   const script = getPythonScriptPath();
+  console.log("Starting Python backend:", script, "packaged:", app.isPackaged);
   subpy = app.isPackaged
     ? spawn(script, [], { cwd: __dirname })
     : spawn("python", [script], { cwd: __dirname });
+  subpy.stderr.on("data", (data) => console.error(data.toString()));
+  subpy.on("exit", (code) => {
+    if (code !== null && code !== 0) {
+      console.error("Python backend exited with code", code);
+      app.quit();
+    }
+  });
   subpy.on("error", (error) => {
     console.error("Failed to start the Python backend:", error.message);
     app.quit();
