@@ -157,9 +157,12 @@ app.on("ready", function () {
 
   // console.log("piyo") -> Problem Nothing
 
-  const rq = require('request-promise');
   const startUp = function () {
-    rq("http://localhost:4040/")
+    fetch("http://localhost:4040/", { signal: AbortSignal.timeout(5000) })
+      .then(response => {
+        if (!response.ok) throw new Error(`Backend returned HTTP ${response.status}`);
+        return response.text();
+      })
       .then(function (htmlString) {
         // console.log('server started');
         createMainWindow();
