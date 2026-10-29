@@ -157,18 +157,16 @@ app.on("ready", function () {
 
   // console.log("piyo") -> Problem Nothing
 
-  const rq = require('request-promise');
   const startUp = function () {
-    rq("http://localhost:4040/")
-      .then(function (htmlString) {
-        // console.log('server started');
+    fetch("http://localhost:4040/")
+      .then(function (response) {
+        if (!response.ok) throw new Error(`Backend returned ${response.status}`);
+        return response.text();
+      })
+      .then(function () {
         createMainWindow();
       })
-      .catch(function (err) {
-        // tmp_error = err;
-        // if (err == tmp_error) {
-        // console.log('server error: ' + err);
-        // }
+      .catch(function () {
         setTimeout(startUp, 200);
       });
   };
