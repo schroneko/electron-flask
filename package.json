@@ -4,7 +4,7 @@
   "description": "EEG Data Analysis Tool",
   "main": "renderer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test tests/*.test.cjs",
     "start": "electron .",
     "package": "node package_python.js && npm run -s package-electron && npm run -s package-cleanup",
     "package-electron": "electron-builder",
@@ -39,8 +39,7 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^42.11.18",
-    "electron-builder": "^26.15.3",
-    "request-promise": "^4.2.6"
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
     "ps-tree": "^1.2.0"
