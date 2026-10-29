@@ -38,7 +38,7 @@
   "author": "Determinant, Inc",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^41.10.7",
+    "electron": "^42.11.18",
     "electron-builder": "^26.15.3",
     "request-promise": "^4.2.6"
   },
